@@ -5,7 +5,6 @@
  */
 package utils;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtBuilder;
@@ -14,7 +13,6 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.vertx.core.json.Json;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -104,7 +102,7 @@ public class UtilsJWT {
     public static String refreshToken(final String refreshToken, final String accessToken) throws Exception {
         try {
             Jwts.parser().setSigningKey(PUBLIC_KEY).parseClaimsJws(accessToken);
-            throw new Exception("Can't refresh accessToken");
+            throw new Exception("Access token is still valid");
         } catch (ExpiredJwtException e) {
             long timeDiference = System.currentTimeMillis() - e.getClaims().getExpiration().getTime();
             if (timeDiference > (1000 * 60 * 60)) { //is grater than 1 hour
@@ -125,5 +123,5 @@ public class UtilsJWT {
             }
         }
     }
-
+    
 }

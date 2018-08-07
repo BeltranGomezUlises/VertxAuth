@@ -1,0 +1,298 @@
+{
+	"info": {
+		"_postman_id": "29c66ee9-5b59-4df7-88a8-282d9f0075cc",
+		"name": "VertxAuth",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"_postman_id": "945fbca8-9d6d-4563-b97d-0061cc817d64",
+			"name": "/employees",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJlbXBsb3llZUlkXCI6MSxcImJyYW5jaG9mZmljZUlkXCI6MX0iLCJpc3MiOiJhdXRoIHN5c3RlbSIsImlhdCI6MTUzMzYyNjU4NSwiZXhwIjoxNTMzNjMwMTg1fQ.FfWwHqyDmcS75DY0vA5kGJCyvZ0C_P4P_D4UB3jYY59tjZgxn0XaT6Sn6ogyYA9zwPOHmL2Y9h92ElV5iN2AAg"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"ulises\",\n\t\"email\":\"beltrangomesdezulises@gmail.com\",\n\t\"phone\":\"6672118438\",\n\t\"pass\":\"1234\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8480/employees",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"employees"
+					]
+				},
+				"description": "employees crud"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "1154d5d3-dd71-4dbc-af50-06dc4c9aeaf5",
+			"name": "/profiles",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJlbXBsb3llZUlkXCI6MSxcImJyYW5jaG9mZmljZUlkXCI6MX0iLCJpc3MiOiJhdXRoIHN5c3RlbSIsImlhdCI6MTUzMzYyNjU4NSwiZXhwIjoxNTMzNjMwMTg1fQ.FfWwHqyDmcS75DY0vA5kGJCyvZ0C_P4P_D4UB3jYY59tjZgxn0XaT6Sn6ogyYA9zwPOHmL2Y9h92ElV5iN2AAg"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"reporter\",\n\t\"description\":\"read only operations\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8480/profiles",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"profiles"
+					]
+				},
+				"description": "employees crud"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "e601f8d2-36c4-4493-a12e-c487de249b63",
+			"name": "/branchoffices",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJlbXBsb3llZUlkXCI6MSxcImJyYW5jaG9mZmljZUlkXCI6MX0iLCJpc3MiOiJhdXRoIHN5c3RlbSIsImlhdCI6MTUzMzYyNjU4NSwiZXhwIjoxNTMzNjMwMTg1fQ.FfWwHqyDmcS75DY0vA5kGJCyvZ0C_P4P_D4UB3jYY59tjZgxn0XaT6Sn6ogyYA9zwPOHmL2Y9h92ElV5iN2AAg"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"valle\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8480/branchoffices",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"branchoffices"
+					]
+				},
+				"description": "employees crud"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "e891757e-8559-4ee1-af52-13cb45dcdbb8",
+			"name": "/modules",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJlbXBsb3llZUlkXCI6MSxcImJyYW5jaG9mZmljZUlkXCI6MX0iLCJpc3MiOiJhdXRoIHN5c3RlbSIsImlhdCI6MTUzMzYyNjU4NSwiZXhwIjoxNTMzNjMwMTg1fQ.FfWwHqyDmcS75DY0vA5kGJCyvZ0C_P4P_D4UB3jYY59tjZgxn0XaT6Sn6ogyYA9zwPOHmL2Y9h92ElV5iN2AAg"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"Other\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8480/modules",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"modules"
+					]
+				},
+				"description": "employees crud"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "a4eaa033-cec0-4ddf-b4e8-d396e6519699",
+			"name": "/subModules",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJlbXBsb3llZUlkXCI6MSxcImJyYW5jaG9mZmljZUlkXCI6MX0iLCJpc3MiOiJhdXRoIHN5c3RlbSIsImlhdCI6MTUzMzYyNjU4NSwiZXhwIjoxNTMzNjMwMTg1fQ.FfWwHqyDmcS75DY0vA5kGJCyvZ0C_P4P_D4UB3jYY59tjZgxn0XaT6Sn6ogyYA9zwPOHmL2Y9h92ElV5iN2AAg"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\":\"example\",\n\t\"module_id\": 3\n}"
+				},
+				"url": {
+					"raw": "localhost:8480/subModules",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"subModules"
+					]
+				},
+				"description": "employees crud"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "33522f31-b9a6-436c-8a4f-62c5ed42872a",
+			"name": "/permissions",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ7XCJlbXBsb3llZUlkXCI6MSxcImJyYW5jaG9mZmljZUlkXCI6MX0iLCJpc3MiOiJhdXRoIHN5c3RlbSIsImlhdCI6MTUzMzYyNjU4NSwiZXhwIjoxNTMzNjMwMTg1fQ.FfWwHqyDmcS75DY0vA5kGJCyvZ0C_P4P_D4UB3jYY59tjZgxn0XaT6Sn6ogyYA9zwPOHmL2Y9h92ElV5iN2AAg"
+					},
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"name\": \"accion ejemplo\",\n\t\"sub_module_id\": 3\n}"
+				},
+				"url": {
+					"raw": "localhost:8480/permissions",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"permissions"
+					]
+				},
+				"description": "employees crud"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "b17c7cdd-f0df-45f8-9e9a-cf50754a2ca6",
+			"name": "/auth/login",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"beltrangomezulises@gmail.com\",\n\t\"pass\":\"1234\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8480/auth/login",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"auth",
+						"login"
+					]
+				},
+				"description": "employees crud"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "27cba13c-5003-46a3-94b4-6275c52b9b88",
+			"name": "/auth/refreshToken",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"accessToken\":\"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaXNzIjoiYXV0aCBzeXN0ZW0iLCJpYXQiOjE1MzM2MzI1NzgsImV4cCI6MTUzMzYzNjE3OH0.81aVVmxXVSOaEGeosvCtATztaQcCkAAr0eWp9PxY6fqZ1TVnS2McsBduBfF99nHG2b1jikb8kLLG9bvWI8l2MQ\",\n\t\"refreshToken\":\"eyJhbGciOiJIUzUxMiJ9.eyJlbXBsb3llZUlkIjoxLCJkYXkiOjIxOX0.rbPWfI5EMSYnc9hE4NfaqOPtGTPhSssAqGWwBqgiCU3yJZx6Y0_LQp_LRZn0__Adp4dA4L_CzfE4d6IgjFVDKQ\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8480/auth/refreshToken",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"auth",
+						"refreshToken"
+					]
+				},
+				"description": "employees crud"
+			},
+			"response": []
+		},
+		{
+			"_postman_id": "c31db100-94c3-4861-bfe0-971bd1bdc70f",
+			"name": "/auth/validAccessToken/:token",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"email\":\"beltrangomezulises@gmail.com\",\n\t\"pass\":\"1234\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8480/auth/validAccessToken/eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaXNzIjoiYXV0aCBzeXN0ZW0iLCJpYXQiOjE1MzM2MzE4OTcsImV4cCI6MTUzMzYzNTQ5N30.fzM3rKh6xHoXrESW9lrK05cmvgdUTAfyEWzgem62p5nWPDIQCtXKwXepDTi5swyHrFZ4g365286bL9DmZhIAIg",
+					"host": [
+						"localhost"
+					],
+					"port": "8480",
+					"path": [
+						"auth",
+						"validAccessToken",
+						"eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIxIiwiaXNzIjoiYXV0aCBzeXN0ZW0iLCJpYXQiOjE1MzM2MzE4OTcsImV4cCI6MTUzMzYzNTQ5N30.fzM3rKh6xHoXrESW9lrK05cmvgdUTAfyEWzgem62p5nWPDIQCtXKwXepDTi5swyHrFZ4g365286bL9DmZhIAIg"
+					]
+				},
+				"description": "employees crud"
+			},
+			"response": []
+		}
+	]
+}

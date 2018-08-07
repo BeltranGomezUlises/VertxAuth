@@ -15,6 +15,8 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static service.commons.Constants.ACTION;
 
 import static service.commons.Constants.CONFIG_HTTP_SERVER_PORT;
@@ -68,29 +70,42 @@ public class AuthVerticle extends AbstractVerticle {
                 .put("email", email)
                 .put("pass", pass);
         DeliveryOptions options = new DeliveryOptions().addHeader(ACTION, EmployeeDBV.ACTION_LOGIN);
-        this.vertx.eventBus().send(EmployeeDBV.class.getSimpleName(), send, options, 
+        this.vertx.eventBus().send(EmployeeDBV.class.getSimpleName(), send, options,
                 (AsyncResult<Message<JsonObject>> reply) -> {
-            if (reply.succeeded()) {
-                if (reply.result().body() == null) {
-                    UtilsResponse.responseWarning(context, "User and/or password invalid");
-                }else{
-                    JsonObject result = reply.result().body();
-                    
-                    UtilsResponse.responseOk(context, result);
-                }
-            } else {
-                responseError(context, UNEXPECTED_ERROR, reply.cause().getMessage());
-            }
-        });
+                    if (reply.succeeded()) {
+                        if (reply.result().body() == null) {
+                            UtilsResponse.responseWarning(context, "User and/or password are invalid");
+                        } else {
+                            JsonObject result = reply.result().body();
+                            result.put("accessToken", UtilsJWT.generateAccessToken(result.getInteger("id")))
+                                    .put("refreshToken", UtilsJWT.generateRefreshToken(result.getInteger("id")));
+                            UtilsResponse.responseOk(context, result);
+                        }
+                    } else {
+                        responseError(context, UNEXPECTED_ERROR, reply.cause().getMessage());
+                    }
+                });
 
     }
 
     private void validToken(RoutingContext context) {
-
+        String token = context.request().getParam("token");
+        if (UtilsJWT.isAccessTokenValid(token)) {
+            UtilsResponse.responseOk(context, "valid");
+        }else{
+            UtilsResponse.responseWarning(context, "not valid");
+        }
     }
 
     private void refreshToken(RoutingContext context) {
-
+        try {
+            JsonObject body = context.getBodyAsJson();
+            String newAccessToken = UtilsJWT.refreshToken(body.getString("refreshToken"), body.getString("accessToken"));
+            UtilsResponse.responseOk(context, new JsonObject().put("newAccessToken", newAccessToken));
+        } catch (Exception ex) {
+            UtilsResponse.responseWarning(context, ex.getMessage());
+        }
+        
     }
 
     private void recoverPass(RoutingContext context) {
