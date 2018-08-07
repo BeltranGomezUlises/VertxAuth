@@ -24,8 +24,7 @@ public enum Action {
      */
     CREATE,
     /**
-     * represents the action of remove an entity by the propertie id in the
-     * databese
+     * represents the action of remove an entity by the propertie id in the databese
      */
     DELETE_BY_ID,
     /**

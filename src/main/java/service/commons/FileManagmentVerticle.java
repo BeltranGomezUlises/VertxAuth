@@ -32,7 +32,7 @@ import utils.UtilsRouter;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 public class FileManagmentVerticle extends AbstractVerticle {
 
@@ -111,7 +111,7 @@ public class FileManagmentVerticle extends AbstractVerticle {
                 HttpServerResponse response = context.response()
                         .putHeader(HttpHeaders.CONTENT_TYPE, "application/octet-stream")
                         .putHeader("Content-Disposition", "attachment; filename=" + file);
-                
+
                 AsyncFile asyncFile = readEvent.result();
 
                 response.setChunked(true);

@@ -12,18 +12,15 @@ package database.commons;
  */
 public enum ErrorCodes {
     /**
-     * Specifies an error when a verticle recives a message without an action in
-     * headers
+     * Specifies an error when a verticle recives a message without an action in headers
      */
     NO_ACTION_SPECIFIED,
     /**
-     * Specifies an error when a verticle recives a message with an action in
-     * headers does not exits
+     * Specifies an error when a verticle recives a message with an action in headers does not exits
      */
     BAD_ACTION,
     /**
-     * Specifies an error when a verticle recives a message that the database
-     * access returns an error
+     * Specifies an error when a verticle recives a message that the database access returns an error
      */
     DB_ERROR
 }

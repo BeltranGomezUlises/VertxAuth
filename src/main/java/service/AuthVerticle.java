@@ -32,7 +32,7 @@ import utils.UtilsSecurity;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 public class AuthVerticle extends AbstractVerticle {
 

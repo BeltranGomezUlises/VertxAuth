@@ -15,7 +15,7 @@ import static service.commons.Constants.ACTION;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 public class MailVerticle extends AbstractVerticle {
 
@@ -54,7 +54,7 @@ public class MailVerticle extends AbstractVerticle {
 
         MailMessage mail = new MailMessage();
         mail.setFrom(config().getString("mail.userName"));
-        mail.setTo(employeeMail);  
+        mail.setTo(employeeMail);
         mail.setSubject("Recover password");
         mail.setHtml("<html>\n"
                 + "    <head>\n"
@@ -73,7 +73,7 @@ public class MailVerticle extends AbstractVerticle {
                 + recoverCode
                 + "                    </div>\n"
                 + "                </div>\n"
-                + "\n"              
+                + "\n"
                 + "            </div>\n"
                 + "        </div>\n"
                 + "    </body>\n"
@@ -81,7 +81,7 @@ public class MailVerticle extends AbstractVerticle {
         mailClient.sendMail(mail, reply -> {
             if (reply.succeeded()) {
                 message.reply(new JsonObject());
-            }else{
+            } else {
                 message.fail(0, reply.cause().getMessage());
             }
         });

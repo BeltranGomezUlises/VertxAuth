@@ -152,10 +152,10 @@ public class MainVerticle extends AbstractVerticle {
                     .put("password", "2424")
                     .put("max_pool_size", 50)
                     .put(Constants.CONFIG_HTTP_SERVER_PORT, 8041)
-                    .put("mail.hostName", "smtp.googlemail.com") 
-                    .put("mail.port", 465) 
-                    .put("mail.ssl", true) 
-                    .put("mail.userName", "yourMail@gmail.com") 
+                    .put("mail.hostName", "smtp.googlemail.com")
+                    .put("mail.port", 465)
+                    .put("mail.ssl", true)
+                    .put("mail.userName", "yourMail@gmail.com")
                     .put("mail.password", "yourPass");
         }
         System.out.println(Json.encodePrettily(result));

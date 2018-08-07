@@ -10,7 +10,7 @@ import service.commons.ServiceVerticle;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 public class PermissionSV extends ServiceVerticle {
 
@@ -23,5 +23,5 @@ public class PermissionSV extends ServiceVerticle {
     protected String getEndpointAddress() {
         return "/permissions";
     }
-    
+
 }

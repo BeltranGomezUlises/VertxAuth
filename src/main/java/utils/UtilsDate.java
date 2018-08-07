@@ -12,9 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * utileria de conversion de fechas, herramienta de manejo de fechas donde
- * incluye suma de tiempo, días y conversiones diferentes formatos de
- * presentación
+ * utileria de conversion de fechas, herramienta de manejo de fechas donde incluye suma de tiempo, días y conversiones diferentes formatos de presentación
  *
  * @author Ulises Beltrán Gómez --- beltrangomezulises@gmail.com
  */
@@ -32,8 +30,7 @@ public class UtilsDate {
      * sumatoria de tiempo en formato texto HH:mm
      *
      * @param tiempos lista de tiempos a sumar
-     * @return la cantidad de horas y minutos en formato texto que resulta de
-     * sumar el parametro tiempos
+     * @return la cantidad de horas y minutos en formato texto que resulta de sumar el parametro tiempos
      */
     public static String sumatoriaDeTiempos(List<String> tiempos) {
         String res = "";
@@ -86,8 +83,7 @@ public class UtilsDate {
     }
 
     /**
-     * convierte date en su representacion texto en formato
-     * yyyy-MM-dd'T'HH:mm:ss.SSSZ
+     * convierte date en su representacion texto en formato yyyy-MM-dd'T'HH:mm:ss.SSSZ
      *
      * @param date fecha a convertir
      * @return
@@ -107,8 +103,7 @@ public class UtilsDate {
     }
 
     /**
-     * obtiene el nombre del dia de la semana de la fecha otorgada en el
-     * parametro "date" en formato texto "EEEE"
+     * obtiene el nombre del dia de la semana de la fecha otorgada en el parametro "date" en formato texto "EEEE"
      *
      * @param date fecha de la cuel obtener el día
      * @param DateFormat formato de texto en el que se encuentra la fecha
@@ -121,8 +116,7 @@ public class UtilsDate {
     }
 
     /**
-     * obtiene el nombre del dia de la semana de la fecha otorgada en el
-     * parametro date en formato texto "EEEE"
+     * obtiene el nombre del dia de la semana de la fecha otorgada en el parametro date en formato texto "EEEE"
      *
      * @param date
      * @return
@@ -133,8 +127,7 @@ public class UtilsDate {
     }
 
     /**
-     * obtiene el nombre del dia de la semana de la fecha otorgada en el
-     * parametro date en formato texto "EEEE"
+     * obtiene el nombre del dia de la semana de la fecha otorgada en el parametro date en formato texto "EEEE"
      *
      * @param date
      * @return
@@ -144,8 +137,7 @@ public class UtilsDate {
     }
 
     /**
-     * obtiene la fecha del día que corresponda a el lunes anterior de la fecha
-     * proporsionada en texto
+     * obtiene la fecha del día que corresponda a el lunes anterior de la fecha proporsionada en texto
      *
      * @param fecha fecha proporsionada en texto en formato d/MM/yyyy
      * @return
@@ -163,8 +155,7 @@ public class UtilsDate {
     }
 
     /**
-     * obtiene la fecha del día que corresponda a el lunes posterior de la fecha
-     * proporsionada en texto
+     * obtiene la fecha del día que corresponda a el lunes posterior de la fecha proporsionada en texto
      *
      * @param fecha fecha proporsionada en texto en formato d/MM/yyyy
      * @return
@@ -182,8 +173,7 @@ public class UtilsDate {
     }
 
     /**
-     * obtiene la fecha del día que corresponda a el lunes anterior de la fecha
-     * proporsionada
+     * obtiene la fecha del día que corresponda a el lunes anterior de la fecha proporsionada
      *
      * @param fecha fecha proporsionada
      * @return
@@ -201,8 +191,7 @@ public class UtilsDate {
     }
 
     /**
-     * obtiene la fecha del día que corresponda a el domingo posterior de la
-     * fecha proporsionada
+     * obtiene la fecha del día que corresponda a el domingo posterior de la fecha proporsionada
      *
      * @param fecha
      * @return
@@ -220,8 +209,7 @@ public class UtilsDate {
     }
 
     /**
-     * verifica si una fecha pertenece a la misma semana de otra fecha
-     * proporsionada
+     * verifica si una fecha pertenece a la misma semana de otra fecha proporsionada
      *
      * @param date fecha a la cual verficar en formato "d/MM/yyyy"
      * @param week fecha de la cual tomar la semana en formato "d/MM/yyyy"

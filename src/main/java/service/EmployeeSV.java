@@ -16,7 +16,7 @@ import static utils.UtilsValidation.*;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 public class EmployeeSV extends ServiceVerticle {
 
@@ -36,10 +36,10 @@ public class EmployeeSV extends ServiceVerticle {
             JsonObject body = context.getBodyAsJson();
             isName(body, "name");
             isMail(body, "email");
-            isPhoneNumber(body, "phone");            
-            
-            body.remove("pass");            
-            context.setBody(body.toBuffer());            
+            isPhoneNumber(body, "phone");
+
+            body.remove("pass");
+            context.setBody(body.toBuffer());
         } catch (UtilsValidation.PropertyValueException ex) {
             return UtilsResponse.responsePropertyValue(context, ex);
         }
@@ -52,10 +52,10 @@ public class EmployeeSV extends ServiceVerticle {
             JsonObject body = context.getBodyAsJson();
             isNameAndNotNull(body, "name");
             isMailAndNotNull(body, "email");
-            isPhoneNumber(body, "phone");            
-            
-            body.put("pass", UtilsSecurity.encodeSHA256(body.getString("pass")));            
-            context.setBody(body.toBuffer());            
+            isPhoneNumber(body, "phone");
+
+            body.put("pass", UtilsSecurity.encodeSHA256(body.getString("pass")));
+            context.setBody(body.toBuffer());
         } catch (UtilsValidation.PropertyValueException ex) {
             return UtilsResponse.responsePropertyValue(context, ex);
         }

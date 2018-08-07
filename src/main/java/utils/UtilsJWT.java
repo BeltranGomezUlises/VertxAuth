@@ -90,10 +90,10 @@ public class UtilsJWT {
         try {
             String object = Jwts.parser().setSigningKey(RECOVER_PRIVATE_KEY).parseClaimsJws(recoverToken).getBody().getSubject();
             JsonObject body = new JsonObject(object);
-            if (body.getString("recover_code").equals(recoverCode)){
+            if (body.getString("recover_code").equals(recoverCode)) {
                 return new RecoverValidation(true, body.getString("employee_email"));
-            }            
-        } catch (Exception e) {            
+            }
+        } catch (Exception e) {
         }
         return new RecoverValidation(false, null);
     }

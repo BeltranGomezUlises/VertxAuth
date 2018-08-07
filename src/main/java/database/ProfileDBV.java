@@ -9,13 +9,13 @@ import database.commons.DBVerticle;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
-public class ProfileDBV extends DBVerticle{
+public class ProfileDBV extends DBVerticle {
 
     @Override
     public String getTableName() {
         return "profile";
     }
-    
+
 }

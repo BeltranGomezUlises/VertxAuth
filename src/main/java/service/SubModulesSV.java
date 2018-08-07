@@ -10,9 +10,9 @@ import service.commons.ServiceVerticle;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
-public class SubModulesSV extends ServiceVerticle{
+public class SubModulesSV extends ServiceVerticle {
 
     @Override
     protected String getDBAddress() {
@@ -23,5 +23,5 @@ public class SubModulesSV extends ServiceVerticle{
     protected String getEndpointAddress() {
         return "/subModules";
     }
-    
+
 }

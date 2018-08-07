@@ -13,7 +13,7 @@ import static service.commons.Constants.ACTION;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 public class EmployeeDBV extends DBVerticle {
 

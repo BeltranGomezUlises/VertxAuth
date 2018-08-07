@@ -40,16 +40,14 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     protected final Router router = Router.router(vertx);
 
     /**
-     * Need to specifie the address of the verticles in the event bus with the
-     * access of the db that contains the table
+     * Need to specifie the address of the verticles in the event bus with the access of the db that contains the table
      *
      * @return the name of the registered DBVerticle to work with
      */
     protected abstract String getDBAddress();
 
     /**
-     * Need to especifie the endpoint domain for this verticles begining with
-     * "/", ex: return "/example";
+     * Need to especifie the endpoint domain for this verticles begining with "/", ex: return "/example";
      *
      * @return the name to register the verticle in the main router
      */
@@ -57,7 +55,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
 
     @Override
     public void start(Future<Void> startFuture) throws Exception {
-        HttpServer server = vertx.createHttpServer();      
+        HttpServer server = vertx.createHttpServer();
         router.get("/").handler(this::findAll);
         router.get("/:id").handler(this::findById);
         router.get("/count").handler(this::count);
@@ -86,8 +84,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     }
 
     /**
-     * Sends a message to the verticle registered with DBAddress especified in
-     * this instance the action of "findAll"
+     * Sends a message to the verticle registered with DBAddress especified in this instance the action of "findAll"
      *
      * @param context the routing context running in the request
      */
@@ -112,8 +109,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     }
 
     /**
-     * Sends a message to the verticle registered with DBAddress especified in
-     * this instance the action of "findById"
+     * Sends a message to the verticle registered with DBAddress especified in this instance the action of "findById"
      *
      * @param context the routing context running in the request
      */
@@ -135,8 +131,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     }
 
     /**
-     * Sends a message to the verticle registered with DBAddress especified in
-     * this instance the action of "update"
+     * Sends a message to the verticle registered with DBAddress especified in this instance the action of "update"
      *
      * @param context the routing context running in the request
      */
@@ -171,8 +166,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     }
 
     /**
-     * Sends a message to the verticle registered with DBAddress especified in
-     * this instance the action of "create"
+     * Sends a message to the verticle registered with DBAddress especified in this instance the action of "create"
      *
      * @param context the routing context running in the request
      */
@@ -208,8 +202,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     }
 
     /**
-     * Sends a message to the verticle registered with DBAddress especified in
-     * this instance the action of "deleteById"
+     * Sends a message to the verticle registered with DBAddress especified in this instance the action of "deleteById"
      *
      * @param context the routing context running in the request
      */
@@ -238,8 +231,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     }
 
     /**
-     * Sends a message to the verticle registered with DBAddress especified in
-     * this instance the action of "deleteById"
+     * Sends a message to the verticle registered with DBAddress especified in this instance the action of "deleteById"
      *
      * @param context the routing context running in the request
      */
@@ -267,8 +259,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     }
 
     /**
-     * Sends a message to the verticle registered with DBAddress especified in
-     * this instance the action of "deleteById"
+     * Sends a message to the verticle registered with DBAddress especified in this instance the action of "deleteById"
      *
      * @param context the routing context running in the request
      */
@@ -322,8 +313,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     }
 
     /**
-     * Verifies is the data of the request is valid to create a record of this
-     * entity
+     * Verifies is the data of the request is valid to create a record of this entity
      *
      * @param context context of the request
      * @return true if the data is valid, false othrewise
@@ -337,8 +327,7 @@ public abstract class ServiceVerticle extends AbstractVerticle {
     }
 
     /**
-     * Verifies is the data of the request is valid to update a record of this
-     * entity
+     * Verifies is the data of the request is valid to update a record of this entity
      *
      * @param context context of the request
      * @return true if the data is valid, false othrewise

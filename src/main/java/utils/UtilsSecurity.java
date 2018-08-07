@@ -13,7 +13,7 @@ import java.util.logging.Logger;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 public class UtilsSecurity {
 

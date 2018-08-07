@@ -9,7 +9,7 @@ import database.commons.DBVerticle;
 
 /**
  *
- * @author ulises
+ * Ulises Beltrán Gómez - beltrangomezulises@gmail.com
  */
 public class ModuleDBV extends DBVerticle {
 
@@ -17,5 +17,5 @@ public class ModuleDBV extends DBVerticle {
     public String getTableName() {
         return "module";
     }
-    
+
 }
