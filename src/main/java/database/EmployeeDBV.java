@@ -18,6 +18,8 @@ import static service.commons.Constants.ACTION;
 public class EmployeeDBV extends DBVerticle {
 
     public static final String ACTION_LOGIN = "EmployeeDBV.login";
+    public static final String ACTION_FIND_BY_MAIL = "EmployeeDBV.findByMail";
+    public static final String ACTION_UPDATE_PASSWORD = "EmployeeDBV.updatePassword";
 
     @Override
     public String getTableName() {
@@ -31,6 +33,12 @@ public class EmployeeDBV extends DBVerticle {
             case ACTION_LOGIN:
                 this.login(message);
                 break;
+            case ACTION_FIND_BY_MAIL:
+                this.findByMail(message);
+                break;
+            case ACTION_UPDATE_PASSWORD:
+                this.updatePassword(message);
+                break;
         }
     }
 
@@ -39,7 +47,7 @@ public class EmployeeDBV extends DBVerticle {
                 .add(message.body().getString("email"))
                 .add(message.body().getString("pass"));
         this.dbClient.queryWithParams(QUERY_LOGIN, params, reply -> {
-            if (reply.succeeded()) {                
+            if (reply.succeeded()) {
                 if (reply.result().getNumRows() == 0) {
                     message.reply(null);
                 } else {
@@ -51,6 +59,34 @@ public class EmployeeDBV extends DBVerticle {
         });
     }
 
+    private void findByMail(Message<JsonObject> message) {
+        JsonArray params = new JsonArray()
+                .add(message.body().getString("email"));
+        this.dbClient.queryWithParams(QUERY_FIND_BY_MAIL, params, reply -> {
+            if (reply.succeeded()) {
+                if (reply.result().getNumRows() == 0) {
+                    message.reply(null);
+                } else {
+                    message.reply(reply.result().getRows().get(0));
+                }
+            } else {
+                reportQueryError(message, reply.cause());
+            }
+        });
+    }
+
+    private void updatePassword(Message<JsonObject> message) {
+        JsonArray params = new JsonArray()
+                .add(message.body().getString("new_password"))
+                .add(message.body().getString("employee_email"));
+        this.dbClient.updateWithParams(QUERY_UPDATE_PASSWORD, params, reply -> {
+            if (reply.succeeded()) {
+                message.reply(null);
+            } else {
+                reportQueryError(message, reply.cause());
+            }
+        });
+    }
 //<editor-fold defaultstate="collapsed" desc="queries">
     private static final String QUERY_LOGIN = "SELECT\n"
             + "	id,\n"
@@ -62,5 +98,20 @@ public class EmployeeDBV extends DBVerticle {
             + "WHERE\n"
             + "	email = ?\n"
             + "	AND pass = ?";
+
+    private static final String QUERY_FIND_BY_MAIL = "SELECT\n"
+            + "	id, name, email \n"
+            + "FROM\n"
+            + "	employee\n"
+            + "WHERE\n"
+            + "	email = ?";
+
+    private static final String QUERY_UPDATE_PASSWORD = "UPDATE\n"
+            + "	employee\n"
+            + "SET\n"
+            + "	pass = ?\n"
+            + "WHERE\n"
+            + "	email = ?";
 //</editor-fold>
+
 }

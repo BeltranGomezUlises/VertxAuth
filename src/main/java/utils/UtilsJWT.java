@@ -13,6 +13,7 @@ import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
+import io.vertx.core.json.JsonObject;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ public class UtilsJWT {
 
     private static final String PUBLIC_KEY = "k$5*t;ht^L$_g76k'H6LSas\"n`6xrE=)?)+g!~0r198(\"D^|Hl'~+SvuMm'P_([";
     private static final String PRIVATE_KEY = "5]yM#;jbI)=s&!:Lh.:LPwv+~W]GH&_a8J[e*xY}0i8YywNz6<`J'+)hGs'2Z[U46w'wK2+i`!CaXOW#]TGquiF:HS:^M}>~b6xuF_s53N~i#B=VHJO+kBznBdkuDF9FBCCA13757B338279EDE56D1DF3EDCCB23BE6748729257D9F791DCD6A6554B361EBC99B";
+    private static final String RECOVER_PRIVATE_KEY = "5]yM#;jbI)=s&!:Lh.:LPwv+~W]GH&_a8J[e*xY}0i8YywNz6<`J'+)hGs'2Z[U46w'wK2+i`!CaXOW#]TGquiF:HS:^M}>~b6xuF_s53N~i#B=VHJO+kBznBdkuDF9FBCCA13757B338279EDE56D1DF3EDCCB23BE6748729257D9F791DCD6A6554B361EBC99B";
 
     /**
      * Generates a jwt for access a system
@@ -59,6 +61,41 @@ public class UtilsJWT {
         builder.setClaims(claims);
 
         return builder.signWith(SignatureAlgorithm.HS512, PRIVATE_KEY).compact();
+    }
+
+    /**
+     * Generates a jws for the process of recover a employee password
+     *
+     * @param revocerCode generated recover code that the user has to use
+     * @return string with the jws
+     */
+    public static String generateRecoverPasswordToken(final String revocerCode, final String employeeEmail) {
+        JwtBuilder builder = Jwts.builder();
+        builder.setSubject(new JsonObject()
+                .put("recover_code", revocerCode)
+                .put("employee_email", employeeEmail).toString()
+        );
+        builder.setIssuer("auth system");
+        return builder.signWith(SignatureAlgorithm.HS512, RECOVER_PRIVATE_KEY).compact();
+    }
+
+    /**
+     * Checks if the recover code is the same to the code inside recoverToken
+     *
+     * @param recoverToken generated recover token
+     * @param recoverCode generated recover code
+     * @return true if the recover code and the recover token matches, false otherwise
+     */
+    public static RecoverValidation isRecoverTokenMatching(final String recoverToken, final String recoverCode) {
+        try {
+            String object = Jwts.parser().setSigningKey(RECOVER_PRIVATE_KEY).parseClaimsJws(recoverToken).getBody().getSubject();
+            JsonObject body = new JsonObject(object);
+            if (body.getString("recover_code").equals(recoverCode)){
+                return new RecoverValidation(true, body.getString("employee_email"));
+            }            
+        } catch (Exception e) {            
+        }
+        return new RecoverValidation(false, null);
     }
 
     /**
@@ -123,5 +160,33 @@ public class UtilsJWT {
             }
         }
     }
-    
+
+    public static class RecoverValidation {
+
+        private boolean valid;
+        private String employeeMail;
+
+        public RecoverValidation(boolean valid, String employeeMail) {
+            this.valid = valid;
+            this.employeeMail = employeeMail;
+        }
+
+        public boolean isValid() {
+            return valid;
+        }
+
+        public void setValid(boolean valid) {
+            this.valid = valid;
+        }
+
+        public String getEmployeeMail() {
+            return employeeMail;
+        }
+
+        public void setEmployeeMail(String employeeMail) {
+            this.employeeMail = employeeMail;
+        }
+
+    }
+
 }

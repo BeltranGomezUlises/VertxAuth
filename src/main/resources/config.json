@@ -4,5 +4,10 @@
     "user": "mysql",
     "password": "password",
     "max_pool_size": 20,
-    "httpServerPort": 8480
+    "httpServerPort": 8480,
+    "mail.hostName": "smtp.googlemail.com",
+    "mail.port": 465,
+    "mail.ssl": true,
+    "mail.userName": "yourMail@gmail.com",
+    "mail.password": "yourPass"
 }

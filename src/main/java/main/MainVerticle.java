@@ -21,6 +21,7 @@ import java.util.function.Function;
 import service.AuthVerticle;
 import service.BranchofficeSV;
 import service.EmployeeSV;
+import service.MailVerticle;
 import service.ModuleSV;
 import service.PermissionSV;
 import service.ProfileSV;
@@ -70,6 +71,7 @@ public class MainVerticle extends AbstractVerticle {
         initializeVerticle(new SubModuleDBV(), new SubModulesSV(), config);
         initializeVerticle(new PermissionDBV(), new PermissionSV(), config);
         vertx.deployVerticle(new AuthVerticle(), new DeploymentOptions().setConfig(config));
+        vertx.deployVerticle(new MailVerticle(), new DeploymentOptions().setConfig(config));
     }
 
     /**
@@ -149,7 +151,12 @@ public class MainVerticle extends AbstractVerticle {
                     .put("user", "mysql")
                     .put("password", "2424")
                     .put("max_pool_size", 50)
-                    .put(Constants.CONFIG_HTTP_SERVER_PORT, 8480); //se default configs
+                    .put(Constants.CONFIG_HTTP_SERVER_PORT, 8041)
+                    .put("mail.hostName", "smtp.googlemail.com") 
+                    .put("mail.port", 465) 
+                    .put("mail.ssl", true) 
+                    .put("mail.userName", "yourMail@gmail.com") 
+                    .put("mail.password", "yourPass");
         }
         System.out.println(Json.encodePrettily(result));
         return result;

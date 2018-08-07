@@ -5,7 +5,9 @@
  */
 package service;
 
+import com.mchange.net.MailSender;
 import database.EmployeeDBV;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.eventbus.DeliveryOptions;
@@ -15,8 +17,7 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Random;
 import static service.commons.Constants.ACTION;
 
 import static service.commons.Constants.CONFIG_HTTP_SERVER_PORT;
@@ -24,6 +25,8 @@ import static service.commons.Constants.UNEXPECTED_ERROR;
 import utils.UtilsJWT;
 import utils.UtilsResponse;
 import static utils.UtilsResponse.responseError;
+import static utils.UtilsResponse.responseOk;
+import static utils.UtilsResponse.responseWarning;
 import utils.UtilsRouter;
 import utils.UtilsSecurity;
 
@@ -92,7 +95,7 @@ public class AuthVerticle extends AbstractVerticle {
         String token = context.request().getParam("token");
         if (UtilsJWT.isAccessTokenValid(token)) {
             UtilsResponse.responseOk(context, "valid");
-        }else{
+        } else {
             UtilsResponse.responseWarning(context, "not valid");
         }
     }
@@ -105,15 +108,76 @@ public class AuthVerticle extends AbstractVerticle {
         } catch (Exception ex) {
             UtilsResponse.responseWarning(context, ex.getMessage());
         }
-        
+
     }
 
     private void recoverPass(RoutingContext context) {
+        JsonObject body = context.getBodyAsJson();
+        this.vertx.eventBus().send(
+                EmployeeDBV.class.getSimpleName(),
+                body, new DeliveryOptions().addHeader(ACTION, EmployeeDBV.ACTION_FIND_BY_MAIL),
+                (AsyncResult<Message<JsonObject>> reply) -> {
+                    if (reply.succeeded()) {
+                        if (reply.result().body() != null) {
+                            Random r = new Random();
+                            //generar codigo de 8 digitos aleatorios
+                            String code = String.valueOf(r.nextInt(99));
+                            code += String.valueOf(r.nextInt(99));
+                            code += String.valueOf(r.nextInt(99));
+                            code += String.valueOf(r.nextInt(99));
 
+                            final String employeeMail = reply.result().body().getString("email");
+                            final String recoverCode = code;
+
+                            JsonObject send = new JsonObject()
+                                    .put("employee_email", employeeMail)
+                                    .put("employee_name", reply.result().body().getString("name"))
+                                    .put("recover_code", recoverCode);
+
+                            this.vertx.eventBus().send(MailVerticle.class.getSimpleName(), send,
+                                    new DeliveryOptions()
+                                            .addHeader(ACTION, MailVerticle.ACTION_SEND_RECOVER_PASS),
+                                    mailReply -> {
+                                        if (mailReply.succeeded()) {
+                                            String jws = UtilsJWT.generateRecoverPasswordToken(recoverCode, employeeMail);
+                                            responseOk(context, new JsonObject()
+                                                    .put("recover_token", jws), "Mail with code sended");
+                                        } else {
+                                            responseWarning(context, "can't send mail",
+                                                    mailReply.cause().getMessage());
+                                        }
+                                    });
+                        } else {
+                            responseWarning(context, "Employee not found");
+                        }
+                    } else {
+                        responseWarning(context, "can't found employee", reply.cause().getMessage());
+                    }
+                }
+        );
     }
 
     private void restorePass(RoutingContext context) {
-
+        JsonObject body = context.getBodyAsJson();
+        String recoverCode = body.getString("recoverCode");
+        String recoverToken = body.getString("recoverToken");
+        String newPassword = body.getString("newPassword");
+        UtilsJWT.RecoverValidation validation = UtilsJWT.isRecoverTokenMatching(recoverToken, recoverCode);
+        if (validation.isValid()) {
+            JsonObject send = new JsonObject()
+                    .put("employee_email", validation.getEmployeeMail())
+                    .put("new_password", UtilsSecurity.encodeSHA256(newPassword));
+            DeliveryOptions options = new DeliveryOptions().addHeader(ACTION, EmployeeDBV.ACTION_UPDATE_PASSWORD);
+            this.vertx.eventBus().send(EmployeeDBV.class.getSimpleName(), send, options, reply -> {
+                if (reply.succeeded()) {
+                    responseOk(context, "Password restored");
+                } else {
+                    responseError(context, reply.cause().getMessage());
+                }
+            });
+        } else {
+            UtilsResponse.responseWarning(context, "Recover code or recover token are not matching");
+        }
     }
 
 }
