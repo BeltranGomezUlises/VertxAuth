@@ -7,6 +7,7 @@ package database.commons;
 
 import static database.commons.Action.FIND_ALL;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.eventbus.DeliveryOptions;
@@ -14,6 +15,7 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.jdbc.JDBCClient;
+import io.vertx.ext.sql.ResultSet;
 import io.vertx.ext.sql.SQLClient;
 import io.vertx.ext.sql.SQLConnection;
 import io.vertx.ext.sql.SQLOptions;
@@ -659,5 +661,19 @@ public abstract class DBVerticle extends AbstractVerticle {
             con.close();
             message.reply(jsonObject);
         });
+    }
+
+    /**
+     * Generic response to avoid boilerplate
+     *
+     * @param message message to reply
+     * @param reply reply from the database query
+     */
+    protected void genericResponse(Message<JsonObject> message, AsyncResult<ResultSet> reply) {
+        if (reply.succeeded()) {
+            message.reply(new JsonArray(reply.result().getRows()));
+        } else {
+            reportQueryError(message, reply.cause());
+        }
     }
 }

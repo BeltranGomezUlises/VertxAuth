@@ -9,6 +9,8 @@ import database.commons.DBVerticle;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import java.util.ArrayList;
+import java.util.List;
 import static service.commons.Constants.ACTION;
 
 /**
@@ -20,6 +22,8 @@ public class EmployeeDBV extends DBVerticle {
     public static final String ACTION_LOGIN = "EmployeeDBV.login";
     public static final String ACTION_FIND_BY_MAIL = "EmployeeDBV.findByMail";
     public static final String ACTION_UPDATE_PASSWORD = "EmployeeDBV.updatePassword";
+    public static final String ACTION_PROFILES = "EmployeeDBV.profiles";
+    public static final String ACTION_ASSIGN_PROFILES = "EmployeeDBV.assignProfiles";
 
     @Override
     public String getTableName() {
@@ -38,6 +42,12 @@ public class EmployeeDBV extends DBVerticle {
                 break;
             case ACTION_UPDATE_PASSWORD:
                 this.updatePassword(message);
+                break;
+            case ACTION_PROFILES:
+                this.profiles(message);
+                break;
+            case ACTION_ASSIGN_PROFILES:
+                this.assignProfiles(message);
                 break;
         }
     }
@@ -87,6 +97,36 @@ public class EmployeeDBV extends DBVerticle {
             }
         });
     }
+
+    private void profiles(Message<JsonObject> message) {
+        int id = message.body().getInteger("id");
+        this.dbClient.queryWithParams(QUERY_EMPLOYEE_PROFILES, new JsonArray().add(id), r -> {
+            this.genericResponse(message, r);
+        });
+    }
+
+    private void assignProfiles(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        int id = body.getInteger("employee_id");
+        List<String> batch = new ArrayList<>();
+        List<String> values = new ArrayList<>();
+        batch.add(QUERY_DELETE_EMPLOYEE_PROFILE + id);
+        JsonArray profiles = body.getJsonArray("profiles");
+        for (int i = 0; i < profiles.size(); i++) {
+            int profile = profiles.getInteger(i);
+            values.add("(" + id + "," + profile + ")");
+        }
+        batch.add(QUERY_INSERT_EMPLOYEE_PROFILE + String.join(",", values));
+        this.startTransaction(message, con -> {
+            con.batch(batch, reply -> {
+                if (reply.succeeded()) {
+                    this.commit(con, message, null);
+                } else {
+                    this.rollback(con, reply.cause(), message);
+                }
+            });
+        });
+    }
 //<editor-fold defaultstate="collapsed" desc="queries">
     private static final String QUERY_LOGIN = "SELECT\n"
             + "	id,\n"
@@ -112,6 +152,24 @@ public class EmployeeDBV extends DBVerticle {
             + "	pass = ?\n"
             + "WHERE\n"
             + "	email = ?";
-//</editor-fold>
+    private static final String QUERY_EMPLOYEE_PROFILES = "SELECT "
+            + "profile_id, "
+            + "p.name, "
+            + "p.description "
+            + "FROM employee_profile\n"
+            + "JOIN profile p ON p.id = profile_id\n"
+            + "WHERE employee_id = ?";
 
+    private static final String QUERY_DELETE_EMPLOYEE_PROFILE = "DELETE\n"
+            + "FROM\n"
+            + "	employee_profile\n"
+            + "WHERE\n"
+            + "	employee_id = ";
+
+    private static final String QUERY_INSERT_EMPLOYEE_PROFILE = "INSERT\n"
+            + "	INTO\n"
+            + "		employee_profile( employee_id,\n"
+            + "		profile_id )\n"
+            + "	VALUES ";
+//</editor-fold>
 }

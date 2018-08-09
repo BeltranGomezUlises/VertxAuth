@@ -5,9 +5,7 @@
  */
 package service;
 
-import com.mchange.net.MailSender;
 import database.EmployeeDBV;
-import io.netty.handler.codec.DelimiterBasedFrameDecoder;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.eventbus.DeliveryOptions;
@@ -19,7 +17,6 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.util.Random;
 import static service.commons.Constants.ACTION;
-
 import static service.commons.Constants.CONFIG_HTTP_SERVER_PORT;
 import static service.commons.Constants.UNEXPECTED_ERROR;
 import utils.UtilsJWT;

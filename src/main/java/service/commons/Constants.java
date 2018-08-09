@@ -17,7 +17,8 @@ public class Constants {
     public static final String INVALID_DATA = "Invalid data";
     public static final String INVALID_DATA_MESSAGE = "Some properties in the model are invalid, see details in data";
     public static final String UNEXPECTED_ERROR = "An unexpected error occurred, check with the systems provider";
-
+    public static final String AUTHORIZATION = "authorization";
+    
     public static final String STATUS = "status";
     public static final String CREATED_BY = "created_by";
     public static final String CREATED_AT = "created_at";
