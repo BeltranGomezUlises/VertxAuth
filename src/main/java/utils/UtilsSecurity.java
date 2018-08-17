@@ -47,5 +47,14 @@ public class UtilsSecurity {
         }
         return hexString.toString();
     }
+    
+    public static void main(String[] args) {
+        System.out.println(encodeSHA256("allabordo"));
+        System.out.println(encodeSHA256("allabordo"));
+        System.out.println(encodeSHA256("allabordo"));
+        System.out.println(encodeSHA256("allabordo"));
+        System.out.println(encodeSHA256("allabordo"));
+        System.out.println(encodeSHA256("allabordo"));
+    }
 
 }

@@ -100,7 +100,7 @@ public class AuthVerticle extends AbstractVerticle {
     private void refreshToken(RoutingContext context) {
         try {
             JsonObject body = context.getBodyAsJson();
-            String newAccessToken = UtilsJWT.refreshToken(body.getString("refreshToken"), body.getString("accessToken"));
+            JsonObject newAccessToken = UtilsJWT.refreshToken(body.getString("refreshToken"), body.getString("accessToken"));
             UtilsResponse.responseOk(context, new JsonObject().put("newAccessToken", newAccessToken));
         } catch (Exception ex) {
             UtilsResponse.responseWarning(context, ex.getMessage());

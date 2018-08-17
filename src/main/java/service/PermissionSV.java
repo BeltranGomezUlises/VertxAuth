@@ -38,6 +38,7 @@ public class PermissionSV extends ServiceVerticle {
         super.start(startFuture);
         this.router.get("/profile/:id").handler(this::profilePermissions);
         this.router.get("/employee/:id").handler(this::employeePermissions);
+        this.router.get("/employeePlusProfiles/:id").handler(this::employeePermissionsPlusProfile);
         this.router.post("/assign/employee").handler(BodyHandler.create());
         this.router.post("/assign/employee").handler(this::assignEmployeePermissions);
         this.router.post("/assign/profile").handler(BodyHandler.create());
@@ -92,6 +93,27 @@ public class PermissionSV extends ServiceVerticle {
         } else {
             UtilsResponse.responseInvalidToken(context);
         }
+    }
+    
+    private void employeePermissionsPlusProfile(RoutingContext context) {
+        this.validateToken(context, __ -> {
+            try {
+                Integer employeeId = Integer.parseInt(context.request().getParam("id"));
+                JsonObject send = new JsonObject()
+                        .put("id", employeeId);
+                this.vertx.eventBus().send(
+                        getDBAddress(),
+                        send,
+                        options(PermissionDBV.ACTION_EMPLOYEE_PLUS_PROFILES_PERMISSIONS),
+                        reply -> {
+                            this.genericResponse(context, reply);
+                        });
+            } catch (Exception e) {
+                UtilsResponse.responsePropertyValue(
+                        context,
+                        new UtilsValidation.PropertyValueException("id", UtilsValidation.MISSING_REQUIRED_VALUE));
+            }
+        });        
     }
 
     private void assignEmployeePermissions(RoutingContext context) {

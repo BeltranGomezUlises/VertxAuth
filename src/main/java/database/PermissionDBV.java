@@ -23,6 +23,7 @@ public class PermissionDBV extends DBVerticle {
     public static final String ACTION_EMPLOYEE_PERMISSIONS = "PermissionDBV.employeePermissions";
     public static final String ACTION_ASSIGN_PROFILE_PERMISSIONS = "PermissionDBV.assignProfilePermissions";
     public static final String ACTION_ASSIGN_EMPLOYEE_PERMISSIONS = "PermissionDBV.assignEmployeePermissions";
+    public static final String ACTION_EMPLOYEE_PLUS_PROFILES_PERMISSIONS = "PermissionDBV.employeePlusProfiles";
 
     @Override
     public String getTableName() {
@@ -46,6 +47,8 @@ public class PermissionDBV extends DBVerticle {
             case ACTION_ASSIGN_EMPLOYEE_PERMISSIONS:
                 this.assignEmployeePermission(message);
                 break;
+            case ACTION_EMPLOYEE_PLUS_PROFILES_PERMISSIONS:
+                this.employeePlusProfilesPermissions(message);
         }
     }
 
@@ -63,6 +66,17 @@ public class PermissionDBV extends DBVerticle {
     private void employeePermissions(Message<JsonObject> message) {
         int id = message.body().getInteger("id");
         this.dbClient.queryWithParams(QUERY_EMPLOYEE_PERMISSIONS, new JsonArray().add(id), reply -> {
+            if (reply.succeeded()) {
+                message.reply(new JsonArray(reply.result().getRows()));
+            } else {
+                reportQueryError(message, reply.cause());
+            }
+        });
+    }
+
+    private void employeePlusProfilesPermissions(Message<JsonObject> message) {
+        int id = message.body().getInteger("id");
+        this.dbClient.queryWithParams(QUERY_EMPLOYEE_PLUS_PROFILES_PERMISSIONS, new JsonArray().add(id).add(id), reply -> {
             if (reply.succeeded()) {
                 message.reply(new JsonArray(reply.result().getRows()));
             } else {
@@ -90,9 +104,9 @@ public class PermissionDBV extends DBVerticle {
         this.startTransaction(message, con -> {
             con.batch(batch, reply -> {
                 if (reply.succeeded()) {
-                    this.commit(con, message, null);                    
+                    this.commit(con, message, null);
                 } else {
-                    this.rollback(con, reply.cause(), message);                    
+                    this.rollback(con, reply.cause(), message);
                 }
             });
         });
@@ -117,9 +131,9 @@ public class PermissionDBV extends DBVerticle {
         this.startTransaction(message, con -> {
             con.batch(batch, reply -> {
                 if (reply.succeeded()) {
-                    this.commit(con, message, null);                    
+                    this.commit(con, message, null);
                 } else {
-                    this.rollback(con, reply.cause(), message);                    
+                    this.rollback(con, reply.cause(), message);
                 }
             });
         });
@@ -167,6 +181,28 @@ public class PermissionDBV extends DBVerticle {
             + "	employee_permission_branchoffice\n"
             + "WHERE\n"
             + "	employee_id = ";
+
+    private static final String QUERY_EMPLOYEE_PLUS_PROFILES_PERMISSIONS = "SELECT\n"
+            + "	permission_id,\n"
+            + "	branchoffice_id\n"
+            + "FROM\n"
+            + "	employee_permission_branchoffice\n"
+            + "WHERE\n"
+            + "	employee_id = ?\n"
+            + "UNION  DISTINCT\n"
+            + "SELECT\n"
+            + "	permission_id,\n"
+            + "	branchoffice_id\n"
+            + "FROM\n"
+            + "	profile_permission_branchoffice\n"
+            + "WHERE\n"
+            + "	profile_id IN (\n"
+            + "	SELECT\n"
+            + "		profile_id\n"
+            + "	FROM\n"
+            + "		employee_profile\n"
+            + "	WHERE\n"
+            + "		employee_id = ? );";
 //</editor-fold>
 
 }

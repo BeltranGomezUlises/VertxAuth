@@ -28,20 +28,23 @@ public class UtilsJWT {
     private static final String PUBLIC_KEY = "k$5*t;ht^L$_g76k'H6LSas\"n`6xrE=)?)+g!~0r198(\"D^|Hl'~+SvuMm'P_([";
     private static final String PRIVATE_KEY = "5]yM#;jbI)=s&!:Lh.:LPwv+~W]GH&_a8J[e*xY}0i8YywNz6<`J'+)hGs'2Z[U46w'wK2+i`!CaXOW#]TGquiF:HS:^M}>~b6xuF_s53N~i#B=VHJO+kBznBdkuDF9FBCCA13757B338279EDE56D1DF3EDCCB23BE6748729257D9F791DCD6A6554B361EBC99B";
     private static final String RECOVER_PRIVATE_KEY = "5]yM#;jbI)=s&!:Lh.:LPwv+~W]GH&_a8J[e*xY}0i8YywNz6<`J'+)hGs'2Z[U46w'wK2+i`!CaXOW#]TGquiF:HS:^M}>~b6xuF_s53N~i#B=VHJO+kBznBdkuDF9FBCCA13757B338279EDE56D1DF3EDCCB23BE6748729257D9F791DCD6A6554B361EBC99B";
-
+    
     /**
      * Generates a jwt for access a system
      *
      * @param employeeId id of the user requesting token
      * @return Access JWT as string
      */
-    public static String generateAccessToken(final int employeeId) {
+    public static JsonObject generateAccessToken(final int employeeId) {
         JwtBuilder builder = Jwts.builder();
         builder.setSubject(String.valueOf(employeeId));
         builder.setIssuer("auth system");
         builder.setIssuedAt(new Date());
-        builder.setExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60)));
-        return builder.signWith(SignatureAlgorithm.HS512, PUBLIC_KEY).compact();
+        Date expDate = new Date(System.currentTimeMillis() + (1000 * 60 * 60));
+        builder.setExpiration(expDate);
+        return new JsonObject()
+                .put("token", builder.signWith(SignatureAlgorithm.HS512, PUBLIC_KEY).compact())
+                .put("expirationDate", expDate.toInstant().toString());
     }
 
     /**
@@ -136,7 +139,7 @@ public class UtilsJWT {
      * @return the new access token
      * @throws Exception any value is no valid for the refreshtoken
      */
-    public static String refreshToken(final String refreshToken, final String accessToken) throws Exception {
+    public static JsonObject refreshToken(final String refreshToken, final String accessToken) throws Exception {
         try {
             Jwts.parser().setSigningKey(PUBLIC_KEY).parseClaimsJws(accessToken);
             throw new Exception("Access token is still valid");
