@@ -14,6 +14,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.vertx.core.json.JsonObject;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -59,7 +60,7 @@ public class UtilsJWT {
         builder.setIssuer("auth system");
 
         Map<String, Object> claims = new HashMap<>();
-        claims.put("day", Calendar.getInstance().get(Calendar.DAY_OF_YEAR));
+        claims.put("time", System.currentTimeMillis());
         claims.put("employeeId", employeeId);
         builder.setClaims(claims);
 
@@ -70,6 +71,7 @@ public class UtilsJWT {
      * Generates a jws for the process of recover a employee password
      *
      * @param revocerCode generated recover code that the user has to use
+     * @param employeeEmail email from the employee to recover pass
      * @return string with the jws
      */
     public static String generateRecoverPasswordToken(final String revocerCode, final String employeeEmail) {
@@ -146,16 +148,17 @@ public class UtilsJWT {
         } catch (ExpiredJwtException e) {
             long timeDiference = System.currentTimeMillis() - e.getClaims().getExpiration().getTime();
             if (timeDiference > (1000 * 60 * 60)) { //is grater than 1 hour
-                throw new Exception("Can't refresh accessToken");
+                throw new Exception("Can't refresh accessToken, your token was expired 1 hour ago");
             } else {
                 Claims claims = Jwts.parser().setSigningKey(PRIVATE_KEY).parseClaimsJws(refreshToken).getBody();
                 int employeeId = Integer.parseInt(claims.get("employeeId").toString());
-                int tokenDay = Integer.parseInt(claims.get("day").toString());
-
-                int actualEmployeeId = Integer.valueOf(e.getClaims().getSubject());
-                int actualDay = Calendar.getInstance().get(Calendar.DAY_OF_YEAR);
+                long tokenTime = Long.parseLong(claims.get("time").toString());                
+                
+                int actualEmployeeId = Integer.valueOf(e.getClaims().getSubject());                
+                long actualTime = System.currentTimeMillis();
+                long tokenTimeDiference = actualTime - tokenTime;
                 if (employeeId == actualEmployeeId
-                        && actualDay == tokenDay) {
+                        && tokenTimeDiference < (1000 * 60 * 60 * 24)) { //si han pasado mas de X tiempo
                     return generateAccessToken(employeeId);
                 } else {
                     throw new Exception("Can't refresh accessToken");

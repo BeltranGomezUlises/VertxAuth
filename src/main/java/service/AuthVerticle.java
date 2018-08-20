@@ -17,15 +17,18 @@ import io.vertx.ext.web.RoutingContext;
 import io.vertx.ext.web.handler.BodyHandler;
 import java.util.Random;
 import static service.commons.Constants.ACTION;
+import static service.commons.Constants.AUTHORIZATION;
 import static service.commons.Constants.CONFIG_HTTP_SERVER_PORT;
 import static service.commons.Constants.UNEXPECTED_ERROR;
 import utils.UtilsJWT;
 import utils.UtilsResponse;
 import static utils.UtilsResponse.responseError;
 import static utils.UtilsResponse.responseOk;
+import static utils.UtilsResponse.responsePropertyValue;
 import static utils.UtilsResponse.responseWarning;
 import utils.UtilsRouter;
 import utils.UtilsSecurity;
+import utils.UtilsValidation;
 
 /**
  *
@@ -47,6 +50,8 @@ public class AuthVerticle extends AbstractVerticle {
         router.post("/recoverPass").handler(this::recoverPass);
         router.post("/restorePass").handler(BodyHandler.create());
         router.post("/restorePass").handler(this::restorePass);
+        router.post("/resetPass").handler(BodyHandler.create());
+        router.post("/resetPass").handler(this::resetPass);
         UtilsRouter.getInstance(vertx).mountSubRouter("/auth", router);
         Integer portNumber = config().getInteger(CONFIG_HTTP_SERVER_PORT);
         if (portNumber == null) {
@@ -174,6 +179,58 @@ public class AuthVerticle extends AbstractVerticle {
             });
         } else {
             UtilsResponse.responseWarning(context, "Recover code or recover token are not matching");
+        }
+    }
+
+    private void resetPass(RoutingContext context) {
+        String token = context.request().headers().get(AUTHORIZATION);
+        if (UtilsJWT.isAccessTokenValid(token)) {
+            JsonObject body = context.getBodyAsJson();
+            try {
+                UtilsValidation.isGraterEqualAndNotNull(body, "employee_id", 0);
+                UtilsValidation.isEmptyAndNotNull(body, "actual_pass");
+                UtilsValidation.isEmptyAndNotNull(body, "new_pass");
+                int employeeId = UtilsJWT.getEmployeeIdFrom(token);
+                String actualPass = body.getString("actual_pass");
+                String newPass = body.getString("new_pass");
+
+                String actualPassEncoded = UtilsSecurity.encodeSHA256(actualPass);
+                String newPassEncoded = UtilsSecurity.encodeSHA256(newPass);
+
+                DeliveryOptions options = new DeliveryOptions()
+                        .addHeader(ACTION, EmployeeDBV.ACTION_VALIDATE_PASS);
+
+                this.vertx.eventBus().send(EmployeeDBV.class.getSimpleName(),
+                        new JsonObject()
+                                .put("employee_id", employeeId)
+                                .put("pass", actualPassEncoded),
+                        options,
+                        reply -> {
+                            if (reply.succeeded()) {
+                                //update pass
+                                DeliveryOptions optionsUpdate = new DeliveryOptions()
+                                        .addHeader(ACTION, EmployeeDBV.ACTION_RESET_PASS);
+                                this.vertx.eventBus().send(EmployeeDBV.class.getSimpleName(),
+                                        new JsonObject()
+                                                .put("employee_id", employeeId)
+                                                .put("pass", newPassEncoded),
+                                        optionsUpdate,
+                                        updateReply -> {
+                                            if (updateReply.succeeded()) {
+                                                responseOk(context, "Pass reseted");
+                                            } else {
+                                                responseError(context, updateReply.cause().getMessage());
+                                            }
+                                        });
+                            } else {
+                                responseWarning(context, "Invalid actual password");
+                            }
+                        });
+            } catch (UtilsValidation.PropertyValueException ex) {
+                responsePropertyValue(context, ex);
+            }
+        } else {
+            UtilsResponse.responseInvalidToken(context);
         }
     }
 

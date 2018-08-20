@@ -6,6 +6,7 @@
 package database;
 
 import database.commons.DBVerticle;
+import static database.commons.ErrorCodes.DB_ERROR;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
@@ -24,6 +25,8 @@ public class EmployeeDBV extends DBVerticle {
     public static final String ACTION_UPDATE_PASSWORD = "EmployeeDBV.updatePassword";
     public static final String ACTION_PROFILES = "EmployeeDBV.profiles";
     public static final String ACTION_ASSIGN_PROFILES = "EmployeeDBV.assignProfiles";
+    public static final String ACTION_VALIDATE_PASS = "EmployeeDBV.validatePass";
+    public static final String ACTION_RESET_PASS = "EmployeeDBV.resetPass";
 
     @Override
     public String getTableName() {
@@ -48,6 +51,12 @@ public class EmployeeDBV extends DBVerticle {
                 break;
             case ACTION_ASSIGN_PROFILES:
                 this.assignProfiles(message);
+                break;
+            case ACTION_VALIDATE_PASS:
+                this.validatePass(message);
+                break;
+            case ACTION_RESET_PASS:
+                this.resetPass(message);
                 break;
         }
     }
@@ -127,6 +136,39 @@ public class EmployeeDBV extends DBVerticle {
             });
         });
     }
+
+    private void validatePass(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        int id = body.getInteger("employee_id");
+        String pass = body.getString("pass");
+        JsonArray params = new JsonArray().add(id).add(pass);
+        this.dbClient.queryWithParams(QUERY_VALITE_PASS, params, reply -> {
+            if (reply.succeeded()) {
+                if (!reply.result().getResults().isEmpty()) {
+                    message.reply(null);
+                } else {
+                    message.fail(0, "");
+                }
+            } else {
+                message.fail(DB_ERROR.ordinal(), reply.cause().getMessage());
+            }
+        });
+    }
+
+    private void resetPass(Message<JsonObject> message) {
+        JsonObject body = message.body();
+        int id = body.getInteger("employee_id");
+        String newPass = body.getString("pass");
+        JsonArray params = new JsonArray().add(newPass).add(id);
+        this.dbClient.queryWithParams(QUERY_RESET_PASS, params, reply -> {
+            if (reply.succeeded()) {
+                message.reply("updated");
+            } else {
+                message.fail(DB_ERROR.ordinal(), reply.cause().getMessage());
+            }
+        });
+
+    }
 //<editor-fold defaultstate="collapsed" desc="queries">
     private static final String QUERY_LOGIN = "SELECT\n"
             + "	id,\n"
@@ -171,5 +213,20 @@ public class EmployeeDBV extends DBVerticle {
             + "		employee_profile( employee_id,\n"
             + "		profile_id )\n"
             + "	VALUES ";
+
+    private static final String QUERY_VALITE_PASS = "SELECT\n"
+            + "	*\n"
+            + "FROM\n"
+            + "	employee\n"
+            + "WHERE\n"
+            + "	id = ?\n"
+            + "	AND pass = ?;";
+
+    private static final String QUERY_RESET_PASS = "UPDATE\n"
+            + "	employee\n"
+            + "SET\n"
+            + "	pass = ?\n"
+            + "WHERE\n"
+            + "	id = ?;";
 //</editor-fold>
 }

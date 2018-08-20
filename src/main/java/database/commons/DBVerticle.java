@@ -53,7 +53,12 @@ public abstract class DBVerticle extends AbstractVerticle {
                 .put("driver_class", config().getString("driver_class"))
                 .put("user", config().getString("user"))
                 .put("password", config().getString("password"))
-                .put("max_pool_size", config().getInteger("max_pool_size"));
+                .put("max_pool_size", config().getInteger("max_pool_size"))
+                .put("min_pool_size", config().getInteger("min_pool_size"))
+                .put("initial_pool_size", config().getInteger("initial_pool_size"))
+                .put("max_statements", config().getInteger("max_statements"))
+                .put("max_statements_per_connection", config().getInteger("max_statements_per_connection"))
+                .put("max_idle_time", config().getInteger("max_idle_time"));
 
         dbClient = JDBCClient.createShared(vertx, conf);
 

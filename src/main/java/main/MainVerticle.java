@@ -75,7 +75,9 @@ public class MainVerticle extends AbstractVerticle {
     }
 
     /**
-     * Deploy dbVerticle and if and only if the dbVerticle is successful, the serviceVerticle starts, both of them runs with the object conf as configuration
+     * Deploy dbVerticle and if and only if the dbVerticle is successful, the
+     * serviceVerticle starts, both of them runs with the object conf as
+     * configuration
      *
      * @param dbVerticle data base verticle with the crud operations
      * @param serviceVerticle service verticle with the crud http services
@@ -93,7 +95,9 @@ public class MainVerticle extends AbstractVerticle {
     }
 
     /**
-     * Deploy dbVerticle and if and only if the dbVerticle is successful, the serviceVerticle starts, both of them runs with the object conf as configuration
+     * Deploy dbVerticle and if and only if the dbVerticle is successful, the
+     * serviceVerticle starts, both of them runs with the object conf as
+     * configuration
      *
      * @param dbVerticle data base verticle with the crud operations
      * @param serviceVerticle service verticle with the crud http services
@@ -150,7 +154,12 @@ public class MainVerticle extends AbstractVerticle {
                     .put("driver_class", "com.mysql.jdbc.Driver")
                     .put("user", "mysql")
                     .put("password", "2424")
-                    .put("max_pool_size", 50)
+                    .put("max_pool_size", 15) //the maximum number of connections to pool - default is 15         
+                    .put("min_pool_size", 3) //the number of connections to initialise the pool with - default is 3
+                    .put("initial_pool_size", 3) //the minimum number of connections to pool
+                    .put("max_statements", 3) //the maximum number of prepared statements to cache - default is 0
+                    .put("max_statements_per_connection", 0) //the maximum number of prepared statements to cache per connection - default is 0                   
+                    .put("max_idle_time", 7200) //number of seconds after which an idle connection will be closed - default is 0 (never expire)
                     .put(Constants.CONFIG_HTTP_SERVER_PORT, 8041)
                     .put("mail.hostName", "smtp.googlemail.com")
                     .put("mail.port", 465)
