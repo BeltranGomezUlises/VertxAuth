@@ -21,6 +21,7 @@ import static service.commons.Constants.AUTHORIZATION;
 import static service.commons.Constants.CONFIG_HTTP_SERVER_PORT;
 import static service.commons.Constants.UNEXPECTED_ERROR;
 import utils.UtilsJWT;
+import utils.UtilsJWT.RefreshException;
 import utils.UtilsResponse;
 import static utils.UtilsResponse.responseError;
 import static utils.UtilsResponse.responseOk;
@@ -107,10 +108,11 @@ public class AuthVerticle extends AbstractVerticle {
             JsonObject body = context.getBodyAsJson();
             JsonObject newAccessToken = UtilsJWT.refreshToken(body.getString("refreshToken"), body.getString("accessToken"));
             UtilsResponse.responseOk(context, new JsonObject().put("newAccessToken", newAccessToken));
+        } catch (RefreshException ex) {
+            UtilsResponse.responseWarning(context, ex.getMessage(), ex.getRefreshProblem());
         } catch (Exception ex) {
             UtilsResponse.responseWarning(context, ex.getMessage());
         }
-
     }
 
     private void recoverPass(RoutingContext context) {
@@ -193,7 +195,10 @@ public class AuthVerticle extends AbstractVerticle {
                 int employeeId = UtilsJWT.getEmployeeIdFrom(token);
                 String actualPass = body.getString("actual_pass");
                 String newPass = body.getString("new_pass");
-
+                if (newPass.equals(actualPass)) {
+                    responseWarning(context, "The new password can not be equal to the previous one");
+                    return;
+                }
                 String actualPassEncoded = UtilsSecurity.encodeSHA256(actualPass);
                 String newPassEncoded = UtilsSecurity.encodeSHA256(newPass);
 

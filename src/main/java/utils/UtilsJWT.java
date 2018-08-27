@@ -14,8 +14,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.vertx.core.json.JsonObject;
-import java.time.Instant;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,7 +27,7 @@ public class UtilsJWT {
     private static final String PUBLIC_KEY = "k$5*t;ht^L$_g76k'H6LSas\"n`6xrE=)?)+g!~0r198(\"D^|Hl'~+SvuMm'P_([";
     private static final String PRIVATE_KEY = "5]yM#;jbI)=s&!:Lh.:LPwv+~W]GH&_a8J[e*xY}0i8YywNz6<`J'+)hGs'2Z[U46w'wK2+i`!CaXOW#]TGquiF:HS:^M}>~b6xuF_s53N~i#B=VHJO+kBznBdkuDF9FBCCA13757B338279EDE56D1DF3EDCCB23BE6748729257D9F791DCD6A6554B361EBC99B";
     private static final String RECOVER_PRIVATE_KEY = "5]yM#;jbI)=s&!:Lh.:LPwv+~W]GH&_a8J[e*xY}0i8YywNz6<`J'+)hGs'2Z[U46w'wK2+i`!CaXOW#]TGquiF:HS:^M}>~b6xuF_s53N~i#B=VHJO+kBznBdkuDF9FBCCA13757B338279EDE56D1DF3EDCCB23BE6748729257D9F791DCD6A6554B361EBC99B";
-    
+
     /**
      * Generates a jwt for access a system
      *
@@ -44,7 +42,9 @@ public class UtilsJWT {
         Date expDate = new Date(System.currentTimeMillis() + (1000 * 60 * 60));
         builder.setExpiration(expDate);
         return new JsonObject()
-                .put("token", builder.signWith(SignatureAlgorithm.HS512, PUBLIC_KEY).compact())
+                .put("token", builder
+                        .signWith(SignatureAlgorithm.HS512, PUBLIC_KEY)
+                        .compact())
                 .put("expirationDate", expDate.toInstant().toString());
     }
 
@@ -74,14 +74,17 @@ public class UtilsJWT {
      * @param employeeEmail email from the employee to recover pass
      * @return string with the jws
      */
-    public static String generateRecoverPasswordToken(final String revocerCode, final String employeeEmail) {
+    public static String generateRecoverPasswordToken(final String revocerCode,
+            final String employeeEmail) {
         JwtBuilder builder = Jwts.builder();
         builder.setSubject(new JsonObject()
                 .put("recover_code", revocerCode)
                 .put("employee_email", employeeEmail).toString()
         );
         builder.setIssuer("auth system");
-        return builder.signWith(SignatureAlgorithm.HS512, RECOVER_PRIVATE_KEY).compact();
+        return builder
+                .signWith(SignatureAlgorithm.HS512, RECOVER_PRIVATE_KEY)
+                .compact();
     }
 
     /**
@@ -89,11 +92,15 @@ public class UtilsJWT {
      *
      * @param recoverToken generated recover token
      * @param recoverCode generated recover code
-     * @return true if the recover code and the recover token matches, false otherwise
+     * @return true if the recover code and the recover token matches, false
+     * otherwise
      */
-    public static RecoverValidation isRecoverTokenMatching(final String recoverToken, final String recoverCode) {
+    public static RecoverValidation isRecoverTokenMatching(
+            final String recoverToken, final String recoverCode) {
         try {
-            String object = Jwts.parser().setSigningKey(RECOVER_PRIVATE_KEY).parseClaimsJws(recoverToken).getBody().getSubject();
+            String object = Jwts.parser()
+                    .setSigningKey(RECOVER_PRIVATE_KEY)
+                    .parseClaimsJws(recoverToken).getBody().getSubject();
             JsonObject body = new JsonObject(object);
             if (body.getString("recover_code").equals(recoverCode)) {
                 return new RecoverValidation(true, body.getString("employee_email"));
@@ -127,8 +134,9 @@ public class UtilsJWT {
         try {
             Jwts.parser().setSigningKey(PUBLIC_KEY).parseClaimsJws(accessToken);
             return true;
-        } catch (ExpiredJwtException | MalformedJwtException | SignatureException
-                | UnsupportedJwtException | IllegalArgumentException | NullPointerException e) {
+        } catch (ExpiredJwtException | MalformedJwtException
+                | SignatureException | UnsupportedJwtException
+                | IllegalArgumentException | NullPointerException e) {
             return false;
         }
     }
@@ -140,28 +148,39 @@ public class UtilsJWT {
      * @param accessToken access token provided by the login
      * @return the new access token
      * @throws Exception any value is no valid for the refreshtoken
+     * @throws utils.UtilsJWT.RefreshException when the validation of time are
+     * not passed
      */
-    public static JsonObject refreshToken(final String refreshToken, final String accessToken) throws Exception {
+    public static JsonObject refreshToken(final String refreshToken,
+            final String accessToken) throws Exception, RefreshException {
         try {
             Jwts.parser().setSigningKey(PUBLIC_KEY).parseClaimsJws(accessToken);
             throw new Exception("Access token is still valid");
         } catch (ExpiredJwtException e) {
-            long timeDiference = System.currentTimeMillis() - e.getClaims().getExpiration().getTime();
-            if (timeDiference > (1000 * 60 * 60)) { //is grater than 1 hour
-                throw new Exception("Can't refresh accessToken, your token was expired 1 hour ago");
+            long timeDiference
+                    = System.currentTimeMillis() - e.getClaims()
+                    .getExpiration().getTime();
+            if (timeDiference > (1000 * 60 * 30)) { //is grater than 30 minutes
+                throw new RefreshException(
+                        "Can't refresh accessToken",
+                        "Access token expired more than an hour ago");
             } else {
-                Claims claims = Jwts.parser().setSigningKey(PRIVATE_KEY).parseClaimsJws(refreshToken).getBody();
+                Claims claims = Jwts.parser()
+                        .setSigningKey(PRIVATE_KEY)
+                        .parseClaimsJws(refreshToken).getBody();
                 int employeeId = Integer.parseInt(claims.get("employeeId").toString());
-                long tokenTime = Long.parseLong(claims.get("time").toString());                
-                
-                int actualEmployeeId = Integer.valueOf(e.getClaims().getSubject());                
+                long tokenTime = Long.parseLong(claims.get("time").toString());
+
+                int actualEmployeeId = Integer.valueOf(e.getClaims().getSubject());
                 long actualTime = System.currentTimeMillis();
                 long tokenTimeDiference = actualTime - tokenTime;
                 if (employeeId == actualEmployeeId
                         && tokenTimeDiference < (1000 * 60 * 60 * 24)) { //si han pasado mas de X tiempo
                     return generateAccessToken(employeeId);
                 } else {
-                    throw new Exception("Can't refresh accessToken");
+                    throw new RefreshException(
+                            "Can't refresh accessToken",
+                            "Invalid refresh token");
                 }
             }
         }
@@ -191,6 +210,25 @@ public class UtilsJWT {
 
         public void setEmployeeMail(String employeeMail) {
             this.employeeMail = employeeMail;
+        }
+
+    }
+
+    public static class RefreshException extends Exception {
+
+        private String refreshProblem;
+
+        public RefreshException(String message, String refreshProblem) {
+            super(message);
+            this.refreshProblem = refreshProblem;
+        }
+
+        public String getRefreshProblem() {
+            return refreshProblem;
+        }
+
+        public void setRefreshProblem(String refreshProblem) {
+            this.refreshProblem = refreshProblem;
         }
 
     }
